@@ -204,7 +204,8 @@ question(nose, yes, "Does he/she have big nose" ).
 chooseRandomly([H|T], Suspect):-
     length([H|T], ElementsInList),
     random_between(1, ElementsInList, X),
-    nth1(X, [H|T], Suspect);  nth1(X, [H|T], Suspect).
+    nth1(X, [H|T], Suspect);
+    nth1(X, [H|T], Suspect).
 
 removeQuestion(_, [], []).
 removeQuestion(X, [X|T], L):- removeQuestion(X, T, L), !.
@@ -270,6 +271,41 @@ verify(S) :-
 undo :- retract(yes(_)),fail.
 undo :- retract(no(_)),fail.
 undo.
+
+
+let_them_ask(Question, Character):-
+  question(Category, Answer, Question),
+  (call(Category, Character, Answer)->
+  true), write(yes), !.
+
+let_them_ask(Question, Character):-
+  write(no), fail, !.
+
+guess_who_Computer([H|T]):-
+  chooseRandomly([H|T], X),
+  game(MyCharacter, [alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom]).
+
+game(MyCharacter, CharactersLeft):-
+  ask("Do you know who my Character is?"),
+  write("Who is it then?"),
+  read(Ans),
+  verify_wining_condition(MyCharacter, Ans), !.
+
+game(MyCharacter, CharactersLeft):-
+  write("What is you question?"),
+  read(UsersQuestion),
+  let_them_ask(UsersQuestion, MyCharacter),
+  analize_characters_positive(UsersQuestion, CharactersLeft, UpdateCharactersLeft),
+  game(MyCharacter, UpdateCharactersLeft);
+  analize_characters_negative(UsersQuestion, CharactersLeft, UpdateCharactersLeft),
+  game(MyCharacter, UpdateCharactersLeft).
+
+
+verify_wining_condition(MyCharacter, UserGuess):-
+  MyCharacter == UserGuess,
+  write("Yes, my character was "), write(MyCharacter);
+  MyCharacter \= UserGuess,
+  write("No, my character was "), write(MyCharacter);
 
 characters([alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom]).
 questions(["Is it a Man?", "Is it a Woman?", "Does he/she have blue eyes?", "Does he/she have brown eyes?", "Does he/she have black eyes?", "Does he/she have red hair?", "Does he/she have white hair?", "Does he/she have brown hair?", "Does he/she have blond hair?", "Does he/she have black hair?", "Is he bald?", "Is he/she wearing hat?", "Is he/she wearing glasses?", "Is he/she smiling?", "Does he/she have big nose"]).
