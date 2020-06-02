@@ -1,6 +1,22 @@
-% Ana Lucía Dueñas Chávez
-% A01702080
-% Programming Languages Final Project
+/**Guess Who! A Prolog gessing game.
+*   Copyright (C) 2020  Ana Lucía Dueñas Chávez
+*
+*   This program is free software: you can redistribute it and/or modify
+*   it under the terms of the GNU General Public License as published by
+*   the Free Software Foundation, either version 3 of the License, or
+*   (at your option) any later version.
+*
+*   This program is distributed in the hope that it will be useful,
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*   GNU General Public License for more details.
+*
+*   You should have received a copy of the GNU General Public License
+*   along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+*  contact: analup250@gmail.com
+*/
+
 
 % Predicates for the guest who game.
 % [alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan tom].
@@ -374,7 +390,7 @@ tellThem2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [A|B], Use
   guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [H|T], UsersList, H).
 
 tellThem2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [A|B], UsersList,  CurrentGuess):-
-  analize_characters_negative(X, [A|B], [H|T]),
+  analize_characters_negative(MyQuestion, [A|B], [H|T]),
   guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [H|T], UsersList, H).
 
 
