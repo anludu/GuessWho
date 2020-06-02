@@ -242,7 +242,8 @@ analize_characters_negative(Question, [H|T], B):-
 %keeps doing it until the Character list
   analize_characters_negative(Question, T, B).
 
-analize_characters_negative(Question, [H|T], [H|B]):- analize_characters_negative(Question, T, B).
+analize_characters_negative(Question, [H|T], [H|B]):-
+  analize_characters_negative(Question, T, B).
 %analize_characters_negative("Is it a Woman?", [alex, alfred, anita, anne, bernard, bill], X).
 %ask("Is it a Woman?").
 /* how to ask questions */
@@ -276,13 +277,13 @@ undo.
 let_them_ask(Question, Character):-
   question(Category, Answer, Question),
   (call(Category, Character, Answer)->
-  true), write(yes), !.
+  true), write(yes), nl, !.
 
 let_them_ask(Question, Character):-
-  write(no), fail, !.
+  write(no), nl, fail, !.
 
-guess_who_Computer([H|T]):-
-  chooseRandomly([H|T], X),
+guess_who_Computer():-
+  chooseRandomly([alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom], MyCharacter),
   game(MyCharacter, [alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom]).
 
 game(MyCharacter, CharactersLeft):-
@@ -294,12 +295,18 @@ game(MyCharacter, CharactersLeft):-
 game(MyCharacter, CharactersLeft):-
   write("What is you question?"),
   read(UsersQuestion),
+  helper_guess_who(MyCharacter, CharactersLeft, UsersQuestion).
+
+helper_guess_who(MyCharacter, CharactersLeft, UsersQuestion):-
   let_them_ask(UsersQuestion, MyCharacter),
   analize_characters_positive(UsersQuestion, CharactersLeft, UpdateCharactersLeft),
+  write(UpdateCharactersLeft),
+  nl,
   game(MyCharacter, UpdateCharactersLeft);
   analize_characters_negative(UsersQuestion, CharactersLeft, UpdateCharactersLeft),
+  write(UpdateCharactersLeft),
+  nl,
   game(MyCharacter, UpdateCharactersLeft).
-
 
 verify_wining_condition(MyCharacter, UserGuess):-
   MyCharacter == UserGuess,
@@ -331,6 +338,52 @@ tellThem(ToGuessCharacter, X, NewQuestionList, [A|B], CurrentGuess):-
   guess_who2(ToGuessCharacter,NewQuestionList, [H|T], H).
 
 
-%Creating a predicate based on a given word
-test(A, H,  X):-
-  call(A, H, X).
+game2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess):-
+  write("YOUR TURN"),
+  nl,
+  ask("Do you know who my Character is?"),
+  write("Who is it then?"),
+  read(Ans),
+  verify_wining_condition(MyCharacter, Ans), !.
+
+game2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess):-
+  write("What is you question?"),
+  read(UsersQuestion),
+  helper_guess_who2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess, UsersQuestion).
+
+helper_guess_who2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess, UsersQuestion):-
+  let_them_ask(UsersQuestion, MyCharacter),
+  analize_characters_positive(UsersQuestion, UserCharactersLeft, UpdateCharactersLeft),
+  write(UpdateCharactersLeft),
+  nl,
+  chooseRandomly([H|T], X),
+  delete([H|T], X, NewQuestionList),
+  tellThem2(MyCharacter, ToGuessCharacter, X, NewQuestionList, [A|B],  UpdateCharactersLeft,  CurrentGuess);
+  analize_characters_negative(UsersQuestion, UserCharactersLeft, UpdateCharactersLeft),
+  write(UpdateCharactersLeft),
+  nl,
+  chooseRandomly([H|T], X),
+  delete([H|T], X, NewQuestionList),
+  tellThem2(MyCharacter, ToGuessCharacter, X, NewQuestionList, [A|B],  UpdateCharactersLeft,  CurrentGuess).
+
+tellThem2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [A|B], UsersList,  CurrentGuess):-
+  write("MY TURN"),
+  nl,
+  ask(MyQuestion),
+  analize_characters_positive(MyQuestion, [A|B], [H|T]),
+  guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [H|T], UsersList, H).
+
+tellThem2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [A|B], UsersList,  CurrentGuess):-
+  analize_characters_negative(X, [A|B], [H|T]),
+  guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, NewQuestionList, [H|T], UsersList, H).
+
+
+guess_who_final(ToGuessCharacter):-
+  chooseRandomly([alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom], MyCharacter),
+  guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, ["Is it a Man?", "Is it a Woman?", "Does he/she have blue eyes?", "Does he/she have brown eyes?", "Does he/she have black eyes?", "Does he/she have red hair?", "Does he/she have white hair?", "Does he/she have brown hair?", "Does he/she have blond hair?", "Does he/she have black hair?", "Is he bald?", "Is he/she wearing hat?", "Is he/she wearing glasses?", "Is your he/she smiling?", "Does he/she have big nose"], [alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom], [alex, alfred, anita, anne, bernard, bill, charles, claire, david, eric, frans, george, herman, joe, maria, max, paul, peter, philip, richard, robert, sam, susan, tom], CurrentGuess).
+
+guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess):-
+  A == CurrentGuess, CurrentGuess == ToGuessCharacter, write("Your character is "), write(CurrentGuess), !.
+
+guess_who_final2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess):-
+  game2(MyCharacter, ToGuessCharacter, MyQuestion, [H|T], [A|B], UserCharactersLeft, CurrentGuess).
