@@ -1,4 +1,4 @@
-/**Guess Who! A Prolog gessing game.
+/**Guess Who! A Prolog guessing game.
 *   Copyright (C) 2020  Ana Lucía Dueñas Chávez
 *
 *   This program is free software: you can redistribute it and/or modify
